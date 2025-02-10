@@ -1,0 +1,62 @@
+services:
+  # Nginx Proxy Manager
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - '40080:80'
+      - '40443:443'
+      - '40081:81'
+    volumes:
+      - ./nginx/data:/data
+      - ./nginx/letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy-network
+
+  # Jellyfin Media Server
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/cache:/cache
+      - /media/guido/HDD3:/media
+
+  # Sonarr
+  sonarr:
+    image: linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    volumes:
+      - ./sonarr/config:/config
+      - /path/to/media:/media
+      - /path/to/downloads:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Buenos_Aires
+
+  # Home Assistant
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    volumes:
+      - ./homeassistant/data/homeassistant:/config
+    privileged: true # Required for some integrations
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+
+networks:
+  proxy-network:
+    driver: bridge

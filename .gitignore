@@ -1,0 +1,20 @@
+# General
+.DS_Store
+*.log
+*.db*
+*.sqlite*
+
+# Home Assistant
+homeassistant/data/**
+!homeassistant/data/homeassistant/configuration.yaml
+
+# Jellyfin
+jellyfin/cache/**
+jellyfin/config/**
+
+# Sonarr
+sonarr/config/**
+
+# Nginx Proxy Manager
+nginx/data/**
+nginx/letsencrypt/**
