@@ -16,6 +16,7 @@ jellyfin/config/**
 sonarr/config/**
 prowlarr/config/**
 deluge/config/**
+bazarr/config/**
 
 # Nginx Proxy Manager
 nginx/data/**

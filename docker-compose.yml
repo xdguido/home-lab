@@ -79,7 +79,25 @@ services:
       - PGID=1000
       - TZ=America/Argentina/Buenos_Aires
 
-  # Home Assistant
+  # Bazarr - Subtitle Management
+  bazarr:
+    image: linuxserver/bazarr:latest
+    container_name: bazarr
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    ports:
+      - 6767:6767
+    volumes:
+      - ./bazarr/config:/config
+      - /media/guido/HDD3/media:/media
+      - /media/guido/HDD3/downloads:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Buenos_Aires
+
+# Home Assistant
   homeassistant:
     image: ghcr.io/home-assistant/home-assistant:stable
     container_name: homeassistant
@@ -95,7 +113,7 @@ services:
       - /dev/ttyUSB0:/dev/ttyUSB0
     environment:
       - TZ=America/Argentina/Buenos_Aires
-
+      
 networks:
   proxy-network:
     driver: bridge
