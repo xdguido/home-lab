@@ -40,7 +40,7 @@ services:
     volumes:
       - ./sonarr/config:/config
       - /media/guido/HDD3/media:/media
-      - /path/to/downloads:/downloads
+      - /media/guido/HDD3/downloads:/downloads
     environment:
       - PUID=1000
       - PGID=1000
@@ -113,7 +113,7 @@ services:
       - /dev/ttyUSB0:/dev/ttyUSB0
     environment:
       - TZ=America/Argentina/Buenos_Aires
-      
+
 networks:
   proxy-network:
     driver: bridge
