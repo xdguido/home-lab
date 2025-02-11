@@ -21,6 +21,8 @@ services:
     restart: unless-stopped
     networks:
       - proxy-network
+    ports:
+      - 8096:8096
     volumes:
       - ./jellyfin/config:/config
       - ./jellyfin/cache:/cache
@@ -33,10 +35,45 @@ services:
     restart: unless-stopped
     networks:
       - proxy-network
+    ports:
+      - 8989:8989
     volumes:
       - ./sonarr/config:/config
-      - /path/to/media:/media
+      - /media/guido/HDD3/media:/media
       - /path/to/downloads:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Buenos_Aires
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    ports:
+      - "9696:9696"
+    environment:
+      - PUID=1000
+      - PGID=1000 
+      - TZ=America/Argentina/Buenos_Aires
+    volumes:
+      - ./prowlarr/config:/config
+
+  deluge:
+    image: linuxserver/deluge:latest
+    container_name: deluge
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    ports:
+      - 8112:8112
+      - 6881:6881
+      - 6881:6881/udp
+    volumes:
+      - ./deluge/config:/config
+      - /media/guido/HDD3/downloads:/downloads
     environment:
       - PUID=1000
       - PGID=1000
@@ -49,6 +86,8 @@ services:
     restart: unless-stopped
     networks:
       - proxy-network
+    ports:
+      - 8123:8123
     volumes:
       - ./homeassistant/data/homeassistant:/config
     privileged: true # Required for some integrations
