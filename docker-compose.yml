@@ -13,6 +13,8 @@ services:
       - ./nginx/letsencrypt:/etc/letsencrypt
     networks:
       - proxy-network
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
 
   # Jellyfin Media Server
   jellyfin:
@@ -27,6 +29,8 @@ services:
       - ./jellyfin/config:/config
       - ./jellyfin/cache:/cache
       - /media/guido/HDD3:/media
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
 
   # Sonarr
   sonarr:
@@ -40,7 +44,7 @@ services:
     volumes:
       - ./sonarr/config:/config
       - /media/guido/HDD3/media:/media
-      - /media/guido/HDD3/downloads:/downloads
+      - ./downloads:/downloads
     environment:
       - PUID=1000
       - PGID=1000
@@ -73,7 +77,7 @@ services:
       - 6881:6881/udp
     volumes:
       - ./deluge/config:/config
-      - /media/guido/HDD3/downloads:/downloads
+      - ./downloads:/downloads
     environment:
       - PUID=1000
       - PGID=1000
@@ -91,7 +95,7 @@ services:
     volumes:
       - ./bazarr/config:/config
       - /media/guido/HDD3/media:/media
-      - /media/guido/HDD3/downloads:/downloads
+      - ./downloads:/downloads
     environment:
       - PUID=1000
       - PGID=1000

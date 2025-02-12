@@ -21,3 +21,5 @@ bazarr/config/**
 # Nginx Proxy Manager
 nginx/data/**
 nginx/letsencrypt/**
+
+downloads
