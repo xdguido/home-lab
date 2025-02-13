@@ -1,5 +1,16 @@
 # HomeLab Starter
 
+This guide will help you set up a home lab environment using Docker containers. We will configure several services including a reverse proxy, media server, download manager, and home automation system.
+
+### Services
+- **Nginx Proxy Manager**: A reverse proxy management system.
+- **Home Assistant**: An open-source home automation platform.
+- **Jellyfin**: A media server for managing and streaming your media.
+- **Sonarr**: Automatically track and download all your shows episodes.
+- **Prowlarr**: An indexer manager/proxy for Sonarr, Radarr, and other media managers.
+- **Deluge**: A lightweight, Free Software, cross-platform BitTorrent client.
+- **Bazarr**: A companion application to Sonarr and Radarr to manage and download subtitles.
+
 ## Basic Requirements
 - Install ``docker`` and ``docker compose``.
 - Install ``ssh`` for remote access.
