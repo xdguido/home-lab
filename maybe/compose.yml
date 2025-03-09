@@ -1,0 +1,86 @@
+# ===========================================================================
+# Example Docker Compose file
+# ===========================================================================
+#
+# Purpose:
+# --------
+#
+# This file is an example Docker Compose configuration for self hosting
+# Maybe on your local machine or on a cloud VPS.
+#
+# The configuration below is a "standard" setup, but may require modification
+# for your specific environment.
+#
+# Setup:
+# ------
+#
+# To run this, you should read the setup guide:
+#
+# https://github.com/maybe-finance/maybe/blob/main/docs/hosting/docker.md
+#
+# Troubleshooting:
+# ----------------
+#
+# If you run into problems, you should open a Discussion here:
+#
+# https://github.com/maybe-finance/maybe/discussions/categories/general
+#
+
+services:
+
+  maybe-app:
+    image: ghcr.io/maybe-finance/maybe:latest
+
+    volumes:
+      - app-storage:/rails/storage
+
+    ports:
+      - 3000:3000
+
+    restart: unless-stopped
+
+    networks:
+      - maybe-network
+      - my-shared-network
+
+    environment:
+      SELF_HOSTED: "true"
+      RAILS_FORCE_SSL: "true"
+      RAILS_ASSUME_SSL: "true"
+      GOOD_JOB_EXECUTION_MODE: async
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?}
+      DB_HOST: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-maybe_production}
+      POSTGRES_USER: ${POSTGRES_USER:-maybe_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - maybe-network
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-maybe_user}
+      POSTGRES_DB: ${POSTGRES_DB:-maybe_production}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  app-storage:
+  postgres-data:
+
+networks:
+  maybe-network:
+    driver: bridge
+  my-shared-network:
+    external: true

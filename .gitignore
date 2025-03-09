@@ -17,9 +17,13 @@ sonarr/config/**
 prowlarr/config/**
 deluge/config/**
 bazarr/config/**
+radarr/config/**
 
 # Nginx Proxy Manager
 nginx/data/**
 nginx/letsencrypt/**
 
+media
 downloads
+*.env
+.env.*

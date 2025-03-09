@@ -13,8 +13,14 @@ services:
       - ./nginx/letsencrypt:/etc/letsencrypt
     networks:
       - proxy-network
+      - my-shared-network
     environment:
       - TZ=America/Argentina/Buenos_Aires
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:81"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
 
   # Jellyfin Media Server
   jellyfin:
@@ -28,9 +34,14 @@ services:
     volumes:
       - ./jellyfin/config:/config
       - ./jellyfin/cache:/cache
-      - /media/guido/HDD3:/media
+      - ${media_path}:/media
     environment:
       - TZ=America/Argentina/Buenos_Aires
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
 
   # Sonarr
   sonarr:
@@ -43,12 +54,40 @@ services:
       - 8989:8989
     volumes:
       - ./sonarr/config:/config
-      - /media/guido/HDD3/media:/media
+      - ${media_path}:/media
       - ./downloads:/downloads
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Argentina/Buenos_Aires
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8989/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+
+  # Radarr
+  radarr:
+    image: linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    ports:
+      - 7878:7878
+    volumes:
+      - ./radarr/config:/config
+      - ${media_path}:/media
+      - ./downloads:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Buenos_Aires
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7878/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -83,7 +122,6 @@ services:
       - PGID=1000
       - TZ=America/Argentina/Buenos_Aires
 
-  # Bazarr - Subtitle Management
   bazarr:
     image: linuxserver/bazarr:latest
     container_name: bazarr
@@ -94,7 +132,7 @@ services:
       - 6767:6767
     volumes:
       - ./bazarr/config:/config
-      - /media/guido/HDD3/media:/media
+      - ${media_path}:/media
       - ./downloads:/downloads
     environment:
       - PUID=1000
@@ -117,7 +155,14 @@ services:
       - /dev/ttyUSB0:/dev/ttyUSB0
     environment:
       - TZ=America/Argentina/Buenos_Aires
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
 
 networks:
   proxy-network:
     driver: bridge
+  my-shared-network:
+    external: true
