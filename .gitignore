@@ -18,6 +18,7 @@ prowlarr/config/**
 deluge/config/**
 bazarr/config/**
 radarr/config/**
+homarr/**
 
 # Nginx Proxy Manager
 nginx/data/**
